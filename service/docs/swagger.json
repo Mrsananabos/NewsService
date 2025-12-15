@@ -1,0 +1,321 @@
+{
+    "swagger": "2.0",
+    "info": {
+        "title": "News Service API",
+        "contact": {},
+        "version": "1.0"
+    },
+    "host": "localhost:8080",
+    "basePath": "/",
+    "paths": {
+        "/create": {
+            "post": {
+                "security": [
+                    {
+                        "BearerAuth": []
+                    }
+                ],
+                "description": "Create news with title, content and categories(optional). Categories must be positive integers, example: [1, 2, 3]",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "news"
+                ],
+                "summary": "Create news",
+                "parameters": [
+                    {
+                        "description": "News data",
+                        "name": "request",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/service_internal_models.NewsCreateForm"
+                        }
+                    }
+                ],
+                "responses": {
+                    "201": {
+                        "description": "News created successful",
+                        "schema": {
+                            "$ref": "#/definitions/internal_handlers_news.SuccessResponseCreate"
+                        }
+                    },
+                    "400": {
+                        "description": "Validation error",
+                        "schema": {
+                            "$ref": "#/definitions/internal_handlers_news.ErrorResponse"
+                        }
+                    },
+                    "401": {
+                        "description": "No authorization",
+                        "schema": {
+                            "$ref": "#/definitions/internal_handlers_news.ErrorResponse"
+                        }
+                    },
+                    "500": {
+                        "description": "Internal server error",
+                        "schema": {
+                            "$ref": "#/definitions/internal_handlers_news.ErrorResponse"
+                        }
+                    }
+                }
+            }
+        },
+        "/edit/{id}": {
+            "post": {
+                "security": [
+                    {
+                        "BearerAuth": []
+                    }
+                ],
+                "description": "Edit news fields (title, content, categories). Categories must be positive integers, example: [1, 2, 3]",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "news"
+                ],
+                "summary": "Edit news",
+                "parameters": [
+                    {
+                        "type": "integer",
+                        "description": "ID news",
+                        "name": "id",
+                        "in": "path",
+                        "required": true
+                    },
+                    {
+                        "description": "News updated data",
+                        "name": "request",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/service_internal_models.NewsEditForm"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Success updated",
+                        "schema": {
+                            "$ref": "#/definitions/internal_handlers_news.SuccessResponse"
+                        }
+                    },
+                    "400": {
+                        "description": "Error validation",
+                        "schema": {
+                            "$ref": "#/definitions/internal_handlers_news.ErrorResponse"
+                        }
+                    },
+                    "401": {
+                        "description": "Not authorized",
+                        "schema": {
+                            "$ref": "#/definitions/internal_handlers_news.ErrorResponse"
+                        }
+                    },
+                    "404": {
+                        "description": "News not found",
+                        "schema": {
+                            "$ref": "#/definitions/internal_handlers_news.ErrorResponse"
+                        }
+                    },
+                    "500": {
+                        "description": "Internal Server Error",
+                        "schema": {
+                            "$ref": "#/definitions/internal_handlers_news.ErrorResponse"
+                        }
+                    }
+                }
+            }
+        },
+        "/list": {
+            "get": {
+                "security": [
+                    {
+                        "BearerAuth": []
+                    }
+                ],
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "news"
+                ],
+                "summary": "Get news",
+                "parameters": [
+                    {
+                        "type": "integer",
+                        "description": "default=10, max=100",
+                        "name": "limit",
+                        "in": "query"
+                    },
+                    {
+                        "type": "integer",
+                        "description": "default=0",
+                        "name": "offset",
+                        "in": "query"
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "List news",
+                        "schema": {
+                            "$ref": "#/definitions/internal_handlers_news.NewsListsResponse"
+                        }
+                    },
+                    "400": {
+                        "description": "Error validation params",
+                        "schema": {
+                            "$ref": "#/definitions/internal_handlers_news.ErrorResponse"
+                        }
+                    },
+                    "401": {
+                        "description": "Not authorized",
+                        "schema": {
+                            "$ref": "#/definitions/internal_handlers_news.ErrorResponse"
+                        }
+                    },
+                    "500": {
+                        "description": "Internal Server Error",
+                        "schema": {
+                            "$ref": "#/definitions/internal_handlers_news.ErrorResponse"
+                        }
+                    }
+                }
+            }
+        }
+    },
+    "definitions": {
+        "internal_handlers_news.ErrorResponse": {
+            "type": "object",
+            "properties": {
+                "Error": {
+                    "type": "string"
+                },
+                "Success": {
+                    "type": "boolean",
+                    "example": false
+                }
+            }
+        },
+        "internal_handlers_news.NewsListsResponse": {
+            "type": "object",
+            "properties": {
+                "News": {
+                    "type": "array",
+                    "items": {
+                        "$ref": "#/definitions/service_internal_models.NewsWithCategories"
+                    }
+                },
+                "Success": {
+                    "type": "boolean",
+                    "example": true
+                }
+            }
+        },
+        "internal_handlers_news.SuccessResponse": {
+            "type": "object",
+            "properties": {
+                "Success": {
+                    "type": "boolean",
+                    "example": true
+                }
+            }
+        },
+        "internal_handlers_news.SuccessResponseCreate": {
+            "type": "object",
+            "properties": {
+                "Id": {
+                    "type": "integer",
+                    "example": 1
+                },
+                "Success": {
+                    "type": "boolean",
+                    "example": true
+                }
+            }
+        },
+        "service_internal_models.NewsCreateForm": {
+            "type": "object",
+            "required": [
+                "Content",
+                "Title"
+            ],
+            "properties": {
+                "Categories": {
+                    "type": "array",
+                    "items": {
+                        "type": "integer"
+                    }
+                },
+                "Content": {
+                    "type": "string",
+                    "minLength": 1
+                },
+                "Title": {
+                    "type": "string",
+                    "maxLength": 255,
+                    "minLength": 1
+                }
+            }
+        },
+        "service_internal_models.NewsEditForm": {
+            "type": "object",
+            "properties": {
+                "Categories": {
+                    "type": "array",
+                    "items": {
+                        "type": "integer"
+                    }
+                },
+                "Content": {
+                    "type": "string",
+                    "minLength": 1
+                },
+                "Title": {
+                    "type": "string",
+                    "maxLength": 255,
+                    "minLength": 1
+                }
+            }
+        },
+        "service_internal_models.NewsWithCategories": {
+            "type": "object",
+            "properties": {
+                "Categories": {
+                    "type": "array",
+                    "items": {
+                        "type": "integer"
+                    }
+                },
+                "Content": {
+                    "type": "string"
+                },
+                "Id": {
+                    "type": "integer"
+                },
+                "Title": {
+                    "type": "string"
+                }
+            }
+        }
+    },
+    "securityDefinitions": {
+        "BearerAuth": {
+            "description": "Bearer \u003cваш_токен\u003e",
+            "type": "apiKey",
+            "name": "Authorization",
+            "in": "header"
+        }
+    }
+}
